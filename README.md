@@ -10,15 +10,15 @@ an API and allow storing of favorite movies. Built with [ReKotlin](https://githu
 ### State
 An immutable entity with consists data about your screen/app. Application
 can have multiple states which form a tree structure to create a global app
-state.
+stateTopRated.
 
 Example
 ```kotlin
 // Global State
 data class AppState(
-        var movieListState: MovieListState? = null,
-        var favoriteCounterState: FavoriteCounterState? = null,
-        var favoriteListState: FavoriteListState? = null
+        var topRatedMovieListState: MovieListState? = null,
+        var favoriteMovieListCounterState: FavoriteCounterState? = null,
+        var favoriteMovieListState: FavoriteListState? = null
 ) : StateType
 ```
 
@@ -32,10 +32,10 @@ to dispatch Actions.
 Example
 ```kotlin
 // Initializing store.
-// appReducer is collection of all reducers and state represents AppState
+// appReducer is collection of all reducers and stateTopRated represents AppState
 val store = Store(
         reducer = ::appReducer,
-        state = null,
+        stateTopRated = null,
         middleware = listOf(networkMiddleWare, databaseMiddleWare, movieMiddleWare)
 )
 
@@ -48,7 +48,7 @@ Actions defines an intent to do something. Action can be anything
 ranging from getting initial list of movies from server to incrementing
 a counter in bottom tab bar.
 
-Actions are the only way to produce a new state and can carry optional
+Actions are the only way to produce a new stateTopRated and can carry optional
 payload.
 
 Example
@@ -65,28 +65,28 @@ class SetInitialCount(val count: Int) : Action
 
 ### Reducers
 Reducers are called whenever an Action is dispatched. A reducer will
-return a new immutable state depending on Action dispatched.
+return a new immutable stateTopRated depending on Action dispatched.
 
 Reducers are pure functions which makes testing them easier.
 
 Example
 ```kotlin
-fun favoriteCounterReducer(action: Action, favoriteCounterState: FavoriteCounterState?)
+fun favoriteCounterReducer(action: Action, favoriteMovieListCounterState: FavoriteCounterState?)
         : FavoriteCounterState {
-    var state = favoriteCounterState ?: FavoriteCounterState()
+    var stateTopRated = favoriteMovieListCounterState ?: FavoriteCounterState()
     when (action) {
         is SetInitialCount -> {
-            // New immutable state
-            state = state.copy(favoriteCount = action.count)
+            // New immutable stateTopRated
+            stateTopRated = stateTopRated.copy(favoriteCount = action.count)
         }
         is Increment -> {
-            state = state.copy(favoriteCount = state.favoriteCount + 1)
+            stateTopRated = stateTopRated.copy(favoriteCount = stateTopRated.favoriteCount + 1)
         }
         is Decrement -> {
-            state = state.copy(favoriteCount = state.favoriteCount - 1)
+            stateTopRated = stateTopRated.copy(favoriteCount = stateTopRated.favoriteCount - 1)
         }
     }
-    return state
+    return stateTopRated
 }
 ```
 
@@ -144,12 +144,12 @@ override method to get new states.
 ```kotlin
 class MainActivity : AppCompatActivity(), StoreSubscriber<FavoriteCounterState?> {
 
-    // Subscribe specific state from store
+    // Subscribe specific stateTopRated from store
     override fun onStart() {
         super.onStart()
         store.subscribe(this) {
             it.select {
-                it.favoriteCounterState
+                it.favoriteMovieListCounterState
             }
         }
     }
@@ -160,9 +160,9 @@ class MainActivity : AppCompatActivity(), StoreSubscriber<FavoriteCounterState?>
         store.unsubscribe(this)
     }
 
-    // Receive new state whenever it is modified.
-    override fun newState(state: FavoriteCounterState?) {
-        state?.apply {
+    // Receive new stateTopRated whenever it is modified.
+    override fun newState(stateTopRated: FavoriteCounterState?) {
+        stateTopRated?.apply {
             if (favoriteCount != 0) {
                 favoriteTab.setBadgeCount(favoriteCount)
             }

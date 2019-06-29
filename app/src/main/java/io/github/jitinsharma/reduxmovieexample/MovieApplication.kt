@@ -1,30 +1,24 @@
 package io.github.jitinsharma.reduxmovieexample
 
 import android.app.Application
-import android.arch.persistence.room.Room
-import io.github.jitinsharma.reduxmovieexample.helpers.debugMode
-import io.github.jitinsharma.reduxmovieexample.middlewares.databaseMiddleWare
-import io.github.jitinsharma.reduxmovieexample.middlewares.movieMiddleWare
-import io.github.jitinsharma.reduxmovieexample.middlewares.networkMiddleWare
-import io.github.jitinsharma.reduxmovieexample.reducers.appReducer
-import io.github.jitinsharma.reduxmovieexample.storage.MovieDatabase
+import androidx.room.Room
+import com.squareup.leakcanary.LeakCanary
+import io.github.jitinsharma.reduxmovieexample.data.local.MovieDatabase
 import timber.log.Timber
-import tw.geothings.rekotlin.Store
 
 /**
  * Created by jsharma on 15/01/18.
  */
-
-val store = Store(
-        reducer = ::appReducer,
-        state = null,
-        middleware = listOf(networkMiddleWare, databaseMiddleWare, movieMiddleWare)
-)
-
 class MovieApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return
+        }
+        LeakCanary.install(this)
+
         instance = this
         debugMode { Timber.plant(Timber.DebugTree()) }
         movieDataBase = Room
@@ -36,5 +30,11 @@ class MovieApplication : Application() {
         @get:Synchronized lateinit var instance: MovieApplication
             private set
         var movieDataBase: MovieDatabase? = null
+    }
+}
+
+inline fun debugMode(block: () -> Unit) {
+    if (BuildConfig.DEBUG) {
+        block()
     }
 }
