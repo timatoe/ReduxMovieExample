@@ -5,62 +5,50 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import io.github.jitinsharma.reduxmovieexample.R
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
+import io.github.jitinsharma.reduxmovieexample.databinding.FragmentFavoriteMovieListBinding
 import io.github.jitinsharma.reduxmovieexample.makeGone
 import io.github.jitinsharma.reduxmovieexample.makeVisible
 import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListActions
-import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListState
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import io.github.jitinsharma.reduxmovieexample.shared.MovieListAdapter
 import kotlinx.android.synthetic.main.fragment_favorite_movie_list.*
-import org.rekotlin.StoreSubscriber
 
 /**
  * A simple [Fragment] subclass.
  */
-class FavoriteMovieListFragment : Fragment(), StoreSubscriber<FavoriteMovieListState> {
-    private lateinit var movieListAdapter: MovieListAdapter
+class FavoriteMovieListFragment : Fragment() {
 
-    override fun newState(state: FavoriteMovieListState) {
-        state.apply {
-            if (favorites.isEmpty()) {
+    private val viewModel: FavoriteMovieListViewModel by lazy {
+        ViewModelProviders.of(this).get(FavoriteMovieListViewModel::class.java)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val binding = FragmentFavoriteMovieListBinding.inflate(inflater, container, false)
+        viewModel.favoriteMoviesLiveData.observe(this, Observer { favoriteMovies ->
+            if (favoriteMovies.isEmpty()) {
                 noFavoriteText.makeVisible()
                 favoriteList.makeGone()
             } else {
                 noFavoriteText.makeGone()
                 favoriteList.makeVisible()
-                initializeAdapter(favorites)
+                initializeAdapter(favoriteMovies)
             }
-        }
+        })
+        return binding.root
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_favorite_movie_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         store.dispatch(FavoriteMovieListActions.LoadFavoriteMovies)
     }
 
-    override fun onStart() {
-        super.onStart()
-        store.subscribe(this) { appStateSubscription ->
-            appStateSubscription.select { appState ->
-                appState.favoriteMovieListState
-            }
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        store.unsubscribe(this)
-    }
-
     private fun initializeAdapter(movieObjects: List<MovieObject>) {
-        movieListAdapter = MovieListAdapter(movieObjects, true)
+        val movieListAdapter = MovieListAdapter(movieObjects, true)
         favoriteList.layoutManager = GridLayoutManager(context, 2)
         favoriteList.adapter = movieListAdapter
     }
