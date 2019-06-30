@@ -1,77 +1,58 @@
 package io.github.jitinsharma.reduxmovieexample
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import com.roughike.bottombar.BottomBarTab
-import com.roughike.bottombar.OnTabSelectListener
-import io.github.jitinsharma.reduxmovieexample.favoritemovielist.FavoriteMovieListFragment
+import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.badge.BadgeDrawable
+import io.github.jitinsharma.reduxmovieexample.databinding.ActivityMovieBinding
 import io.github.jitinsharma.reduxmovieexample.redux.actions.CheckForFavorites
 import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListCounterState
 import io.github.jitinsharma.reduxmovieexample.redux.store
-import io.github.jitinsharma.reduxmovieexample.topratedmovielist.TopRatedMovieListFragment
-import kotlinx.android.synthetic.main.activity_movie.*
 import org.rekotlin.StoreSubscriber
 
-@SuppressLint("PrivateResource")
-class MovieActivity : AppCompatActivity(), OnTabSelectListener, StoreSubscriber<FavoriteMovieListCounterState?> {
-    private lateinit var favoriteTab: BottomBarTab
+class MovieActivity : AppCompatActivity(), StoreSubscriber<FavoriteMovieListCounterState?> {
 
-    override fun newState(stateMovieList: FavoriteMovieListCounterState?) {
-        stateMovieList?.apply {
-            when (favoriteCount) {
-                0 -> favoriteTab.removeBadge()
-                else -> favoriteTab.setBadgeCount(favoriteCount)
-            }
-        }
-    }
+    private lateinit var navController: NavController
+    private lateinit var favoriteMovieListBadgeDrawable: BadgeDrawable
 
-    override fun onTabSelected(tabId: Int) {
-        when (tabId) {
-            R.id.tab_list -> {
-                showFragment(TopRatedMovieListFragment())
-            }
-            R.id.tab_favorite -> {
-                showFragment(FavoriteMovieListFragment())
-            }
+    override fun newState(favoriteMovieListCounterState: FavoriteMovieListCounterState?) {
+        favoriteMovieListCounterState?.apply {
+            favoriteMovieListBadgeDrawable.isVisible = favoriteCount > 0
+            favoriteMovieListBadgeDrawable.number = favoriteCount
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie)
-        bottomBar.setOnTabSelectListener(this)
-        favoriteTab = bottomBar.getTabWithId(R.id.tab_favorite)
-        showFragment(TopRatedMovieListFragment())
+
+        val binding: ActivityMovieBinding = DataBindingUtil.setContentView(
+                this,
+                R.layout.activity_movie
+        )
+
+        navController = findNavController(R.id.nav_host_fragment)
+
+        binding.bottomNavigation.setupWithNavController(navController)
+        favoriteMovieListBadgeDrawable = binding.bottomNavigation.showBadge(R.id.favoriteMovieListFragment)
+
         store.dispatch(CheckForFavorites())
     }
 
     override fun onStart() {
         super.onStart()
         store.subscribe(this) {
-            it.select {
-                it.favoriteMovieListCounterState
+            it.select { appState ->
+                appState.favoriteMovieListCounterState
             }
         }
     }
 
     override fun onStop() {
-        super.onStop()
         store.unsubscribe(this)
+        super.onStop()
     }
 
-    private fun showFragment(fragment: Fragment) {
-        transact {
-            replace(R.id.container, fragment)
-            setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out)
-        }
-    }
-}
-
-inline fun AppCompatActivity.transact(action: FragmentTransaction.() -> Unit) {
-    supportFragmentManager.beginTransaction().apply {
-        action()
-    }.commit()
 }

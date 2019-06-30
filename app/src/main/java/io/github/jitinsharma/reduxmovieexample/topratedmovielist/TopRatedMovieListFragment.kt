@@ -19,7 +19,6 @@ import org.rekotlin.StoreSubscriber
  * A simple [Fragment] subclass.
  */
 class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListState?> {
-    private lateinit var movieListAdapter: MovieListAdapter
 
     override fun newState(stateTopRated: TopRatedMovieListState?) {
         stateTopRated?.movieObjects?.let {
@@ -37,7 +36,7 @@ class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListS
     }
 
     private fun initializeAdapter(movieObjects: List<MovieObject>) {
-        movieListAdapter = MovieListAdapter(movieObjects)
+        val movieListAdapter = MovieListAdapter(movieObjects)
         movieList.layoutManager = GridLayoutManager(context, 2)
         movieList.adapter = movieListAdapter
     }
