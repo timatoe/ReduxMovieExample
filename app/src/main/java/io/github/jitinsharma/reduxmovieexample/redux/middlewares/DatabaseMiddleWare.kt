@@ -2,7 +2,9 @@ package io.github.jitinsharma.reduxmovieexample.redux.middlewares
 
 import io.github.jitinsharma.reduxmovieexample.MovieApplication
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
-import io.github.jitinsharma.reduxmovieexample.redux.actions.*
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListActions
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListCounterActions
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.AppState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,16 +21,16 @@ internal val databaseMiddleWare: Middleware<AppState> = { dispatch, _ ->
     { next ->
         { action ->
             when (action) {
-                is AddMovieToFavorites -> {
+                is TopRatedMovieListActions.AddMovieToFavorites -> {
                     insertMovieAsync(action.movieObject, dispatch)
                 }
-                is RemoveMovieFromFavorites -> {
+                is TopRatedMovieListActions.RemoveMovieFromFavorites -> {
                     deleteMovieAsync(action.movieObject, dispatch)
                 }
-                is CheckForFavorites -> {
+                is FavoriteMovieListCounterActions.CheckForFavorites -> {
                     getFavoriteCount(dispatch)
                 }
-                is LoadFavoriteMovies -> {
+                is FavoriteMovieListActions.LoadFavoriteMovies -> {
                     getFavoriteMovies(dispatch)
                 }
             }
@@ -41,7 +43,7 @@ private fun insertMovieAsync(movieObject: MovieObject, dispatch: DispatchFunctio
     CoroutineScope(Dispatchers.IO).launch {
         MovieApplication.movieDataBase?.movieDao()?.insert(movieObject)
         withContext(Dispatchers.Main) {
-            dispatch.invoke(Increment())
+            dispatch.invoke(FavoriteMovieListCounterActions.Increment)
         }
     }
 }
@@ -50,7 +52,7 @@ private fun deleteMovieAsync(movieObject: MovieObject, dispatch: DispatchFunctio
     CoroutineScope(Dispatchers.IO).launch {
         MovieApplication.movieDataBase?.movieDao()?.delete(movieObject)
         withContext(Dispatchers.Main) {
-            dispatch.invoke(Decrement())
+            dispatch.invoke(FavoriteMovieListCounterActions.Decrement)
         }
     }
 }
@@ -60,7 +62,7 @@ private fun getFavoriteCount(dispatch: DispatchFunction) {
         val movies = MovieApplication.movieDataBase?.movieDao()?.getAll()
         withContext(Dispatchers.Main) {
             movies?.apply {
-                dispatch.invoke(SetInitialCount(size))
+                dispatch.invoke(FavoriteMovieListCounterActions.SetInitialCount(size))
             }
         }
     }
@@ -71,7 +73,7 @@ private fun getFavoriteMovies(dispatch: DispatchFunction) {
         val movies = MovieApplication.movieDataBase?.movieDao()?.getAll()
         withContext(Dispatchers.Main) {
             movies?.apply {
-                dispatch(SetFavoriteMovies(this))
+                dispatch(FavoriteMovieListActions.SetFavoriteMovies(this))
             }
         }
     }

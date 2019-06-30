@@ -1,6 +1,6 @@
 package io.github.jitinsharma.reduxmovieexample.redux.reducers
 
-import io.github.jitinsharma.reduxmovieexample.redux.actions.SetFavoriteMovies
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListState
 import org.rekotlin.Action
 
@@ -11,7 +11,7 @@ import org.rekotlin.Action
 fun favoriteListReducer(action: Action, favoriteMovieListState: FavoriteMovieListState?): FavoriteMovieListState {
     var state = favoriteMovieListState ?: FavoriteMovieListState()
     when (action) {
-        is SetFavoriteMovies -> {
+        is FavoriteMovieListActions.SetFavoriteMovies -> {
             state = state.copy(favorites = action.favoriteMovies)
         }
     }

@@ -1,8 +1,6 @@
 package io.github.jitinsharma.reduxmovieexample.redux.reducers
 
-import io.github.jitinsharma.reduxmovieexample.redux.actions.Decrement
-import io.github.jitinsharma.reduxmovieexample.redux.actions.Increment
-import io.github.jitinsharma.reduxmovieexample.redux.actions.SetInitialCount
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListCounterActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListCounterState
 import org.rekotlin.Action
 
@@ -14,13 +12,13 @@ fun favoriteCounterReducer(action: Action, favoriteMovieListCounterState: Favori
         : FavoriteMovieListCounterState {
     var state = favoriteMovieListCounterState ?: FavoriteMovieListCounterState()
     when (action) {
-        is SetInitialCount -> {
+        is FavoriteMovieListCounterActions.SetInitialCount -> {
             state = state.copy(favoriteCount = action.count)
         }
-        is Increment -> {
+        is FavoriteMovieListCounterActions.Increment -> {
             state = state.copy(favoriteCount = state.favoriteCount + 1)
         }
-        is Decrement -> {
+        is FavoriteMovieListCounterActions.Decrement -> {
             state = state.copy(favoriteCount = state.favoriteCount - 1)
         }
     }

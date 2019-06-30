@@ -6,7 +6,7 @@ import org.rekotlin.Action
 /**
  * Created by jsharma on 11/02/18.
  */
-
-class LoadFavoriteMovies : Action
-
-class SetFavoriteMovies(val favoriteMovies: List<MovieObject>) : Action
+sealed class FavoriteMovieListActions {
+    object LoadFavoriteMovies : Action
+    class SetFavoriteMovies(val favoriteMovies: List<MovieObject>) : Action
+}

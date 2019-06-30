@@ -2,8 +2,7 @@ package io.github.jitinsharma.reduxmovieexample.redux.middlewares
 
 import io.github.jitinsharma.reduxmovieexample.MovieApplication
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
-import io.github.jitinsharma.reduxmovieexample.redux.actions.DisplayMovies
-import io.github.jitinsharma.reduxmovieexample.redux.actions.InitializeMovieList
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.AppState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,7 @@ internal val movieMiddleWare: Middleware<AppState> = { dispatch, _ ->
     { next ->
         { action ->
             when (action) {
-                is InitializeMovieList -> {
+                is TopRatedMovieListActions.InitializeMovieList -> {
                     updateMoviesWithFavorites(action.movieObjects, dispatch)
                 }
             }
@@ -42,7 +41,7 @@ private fun updateMoviesWithFavorites(movieObjects: List<MovieObject>, dispatch:
                     it.isFavorite = true
                 }
             }
-            dispatch(DisplayMovies(movieObjects))
+            dispatch(TopRatedMovieListActions.DisplayMovies(movieObjects))
         }
     }
 }

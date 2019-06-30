@@ -3,8 +3,7 @@ package io.github.jitinsharma.reduxmovieexample.redux.middlewares
 import io.github.jitinsharma.reduxmovieexample.API_KEY
 import io.github.jitinsharma.reduxmovieexample.data.remote.MovieApiClient
 import io.github.jitinsharma.reduxmovieexample.data.remote.MovieApiInterface
-import io.github.jitinsharma.reduxmovieexample.redux.actions.InitializeMovieList
-import io.github.jitinsharma.reduxmovieexample.redux.actions.LoadTopRatedMovies
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.AppState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,7 @@ internal val networkMiddleWare: Middleware<AppState> = { dispatch, _ ->
     { next ->
         { action ->
             when (action) {
-                is LoadTopRatedMovies -> {
+                is TopRatedMovieListActions.LoadTopRatedMovies -> {
                     callTopRatedMovies(dispatch)
                 }
             }
@@ -36,7 +35,7 @@ private fun callTopRatedMovies(dispatch: DispatchFunction) {
         val movieResponse = apiService?.discoverMovies(API_KEY)
         val movies = movieResponse?.results ?: emptyList()
         withContext(Dispatchers.Main) {
-            dispatch(InitializeMovieList(movies))
+            dispatch(TopRatedMovieListActions.InitializeMovieList(movies))
         }
     }
 }

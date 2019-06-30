@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import io.github.jitinsharma.reduxmovieexample.R
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
-import io.github.jitinsharma.reduxmovieexample.redux.actions.LoadTopRatedMovies
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.TopRatedMovieListState
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import io.github.jitinsharma.reduxmovieexample.shared.MovieListAdapter
@@ -32,7 +32,7 @@ class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        store.dispatch(LoadTopRatedMovies())
+        store.dispatch(TopRatedMovieListActions.LoadTopRatedMovies)
     }
 
     private fun initializeAdapter(movieObjects: List<MovieObject>) {
