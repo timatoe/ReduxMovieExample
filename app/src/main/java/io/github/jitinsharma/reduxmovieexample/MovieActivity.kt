@@ -8,7 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.badge.BadgeDrawable
 import io.github.jitinsharma.reduxmovieexample.databinding.ActivityMovieBinding
-import io.github.jitinsharma.reduxmovieexample.redux.actions.CheckForFavorites
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListCounterActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListCounterState
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import org.rekotlin.StoreSubscriber
@@ -38,7 +38,7 @@ class MovieActivity : AppCompatActivity(), StoreSubscriber<FavoriteMovieListCoun
         binding.bottomNavigation.setupWithNavController(navController)
         favoriteMovieListBadgeDrawable = binding.bottomNavigation.showBadge(R.id.favoriteMovieListFragment)
 
-        store.dispatch(CheckForFavorites())
+        store.dispatch(FavoriteMovieListCounterActions.CheckForFavorites)
     }
 
     override fun onStart() {

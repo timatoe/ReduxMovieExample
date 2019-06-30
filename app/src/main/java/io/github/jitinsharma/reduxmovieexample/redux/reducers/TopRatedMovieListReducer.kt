@@ -1,6 +1,6 @@
 package io.github.jitinsharma.reduxmovieexample.redux.reducers
 
-import io.github.jitinsharma.reduxmovieexample.redux.actions.DisplayMovies
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.TopRatedMovieListState
 import org.rekotlin.Action
 
@@ -11,7 +11,7 @@ import org.rekotlin.Action
 fun movieListReducer(action: Action, topRatedMovieListState: TopRatedMovieListState?): TopRatedMovieListState {
     var state = topRatedMovieListState ?: TopRatedMovieListState()
     when (action) {
-        is DisplayMovies -> {
+        is TopRatedMovieListActions.DisplayMovies -> {
             state = state.copy(movieObjects = action.movieObjects)
         }
     }

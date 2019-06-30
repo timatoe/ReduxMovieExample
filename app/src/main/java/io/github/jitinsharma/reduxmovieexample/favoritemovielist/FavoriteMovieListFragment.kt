@@ -10,7 +10,7 @@ import io.github.jitinsharma.reduxmovieexample.R
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
 import io.github.jitinsharma.reduxmovieexample.makeGone
 import io.github.jitinsharma.reduxmovieexample.makeVisible
-import io.github.jitinsharma.reduxmovieexample.redux.actions.LoadFavoriteMovies
+import io.github.jitinsharma.reduxmovieexample.redux.actions.FavoriteMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListState
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import io.github.jitinsharma.reduxmovieexample.shared.MovieListAdapter
@@ -42,7 +42,7 @@ class FavoriteMovieListFragment : Fragment(), StoreSubscriber<FavoriteMovieListS
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        store.dispatch(LoadFavoriteMovies())
+        store.dispatch(FavoriteMovieListActions.LoadFavoriteMovies)
     }
 
     override fun onStart() {

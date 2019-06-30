@@ -9,8 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.github.jitinsharma.reduxmovieexample.*
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
-import io.github.jitinsharma.reduxmovieexample.redux.actions.AddMovieToFavorites
-import io.github.jitinsharma.reduxmovieexample.redux.actions.RemoveMovieFromFavorites
+import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
 import io.github.jitinsharma.reduxmovieexample.redux.store
 
 /**
@@ -74,10 +73,10 @@ class MovieListAdapter(private val movieObjects: List<MovieObject>,
         private fun MovieObject.handleFavoriteClick() {
             if (!isFavorite) {
                 isFavorite = true
-                store.dispatch(AddMovieToFavorites(this))
+                store.dispatch(TopRatedMovieListActions.AddMovieToFavorites(this))
             } else {
                 isFavorite = false
-                store.dispatch(RemoveMovieFromFavorites(this))
+                store.dispatch(TopRatedMovieListActions.RemoveMovieFromFavorites(this))
             }
         }
     }
