@@ -20,11 +20,11 @@ import org.rekotlin.StoreSubscriber
 /**
  * A simple [Fragment] subclass.
  */
-class FavoriteMovieListFragment : Fragment(), StoreSubscriber<FavoriteMovieListState?> {
+class FavoriteMovieListFragment : Fragment(), StoreSubscriber<FavoriteMovieListState> {
     private lateinit var movieListAdapter: MovieListAdapter
 
-    override fun newState(stateMovie: FavoriteMovieListState?) {
-        stateMovie?.apply {
+    override fun newState(state: FavoriteMovieListState) {
+        state.apply {
             if (favorites.isEmpty()) {
                 noFavoriteText.makeVisible()
                 favoriteList.makeGone()
@@ -47,9 +47,9 @@ class FavoriteMovieListFragment : Fragment(), StoreSubscriber<FavoriteMovieListS
 
     override fun onStart() {
         super.onStart()
-        store.subscribe(this) {
-            it.select {
-                it.favoriteMovieListState
+        store.subscribe(this) { appStateSubscription ->
+            appStateSubscription.select { appState ->
+                appState.favoriteMovieListState
             }
         }
     }
