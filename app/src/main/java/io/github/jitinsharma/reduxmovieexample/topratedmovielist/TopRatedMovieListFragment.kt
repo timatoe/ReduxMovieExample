@@ -5,28 +5,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import io.github.jitinsharma.reduxmovieexample.R
 import io.github.jitinsharma.reduxmovieexample.data.MovieObject
+import io.github.jitinsharma.reduxmovieexample.databinding.FragmentTopRatedMovieListBinding
 import io.github.jitinsharma.reduxmovieexample.redux.actions.TopRatedMovieListActions
-import io.github.jitinsharma.reduxmovieexample.redux.states.TopRatedMovieListState
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import io.github.jitinsharma.reduxmovieexample.shared.MovieListAdapter
 import kotlinx.android.synthetic.main.fragment_top_rated_movie_list.*
-import org.rekotlin.StoreSubscriber
 
 /**
  * A simple [Fragment] subclass.
  */
-class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListState> {
+class TopRatedMovieListFragment : Fragment() {
 
-    override fun newState(state: TopRatedMovieListState) {
-        initializeAdapter(state.movieObjects)
+    private val viewModel: TopRatedMovieListViewModel by lazy {
+        ViewModelProviders.of(this).get(TopRatedMovieListViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_top_rated_movie_list, container, false)
+                              savedInstanceState: Bundle?): View? {
+        val binding = FragmentTopRatedMovieListBinding.inflate(inflater, container, false)
+        viewModel.topRatedMoviesLiveData.observe(this, Observer { topRatedMovies ->
+            initializeAdapter(topRatedMovies)
+        })
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,17 +44,4 @@ class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListS
         movieList.adapter = movieListAdapter
     }
 
-    override fun onStart() {
-        super.onStart()
-        store.subscribe(this) { appStateSubscription ->
-            appStateSubscription.select { appState ->
-                appState.topRatedMovieListState
-            }.skipRepeats()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        store.unsubscribe(this)
-    }
 }
