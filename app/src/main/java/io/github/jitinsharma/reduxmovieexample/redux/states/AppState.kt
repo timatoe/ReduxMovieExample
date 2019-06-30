@@ -7,7 +7,7 @@ import org.rekotlin.StateType
  */
 
 data class AppState(
-        var topRatedMovieListState: TopRatedMovieListState? = null,
-        var favoriteMovieListCounterState: FavoriteMovieListCounterState? = null,
-        var favoriteMovieListState: FavoriteMovieListState? = null
+        var topRatedMovieListState: TopRatedMovieListState = TopRatedMovieListState(),
+        var favoriteMovieListCounterState: FavoriteMovieListCounterState = FavoriteMovieListCounterState(),
+        var favoriteMovieListState: FavoriteMovieListState = FavoriteMovieListState()
 ) : StateType

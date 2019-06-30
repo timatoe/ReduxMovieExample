@@ -13,13 +13,13 @@ import io.github.jitinsharma.reduxmovieexample.redux.states.FavoriteMovieListCou
 import io.github.jitinsharma.reduxmovieexample.redux.store
 import org.rekotlin.StoreSubscriber
 
-class MovieActivity : AppCompatActivity(), StoreSubscriber<FavoriteMovieListCounterState?> {
+class MovieActivity : AppCompatActivity(), StoreSubscriber<FavoriteMovieListCounterState> {
 
     private lateinit var navController: NavController
     private lateinit var favoriteMovieListBadgeDrawable: BadgeDrawable
 
-    override fun newState(favoriteMovieListCounterState: FavoriteMovieListCounterState?) {
-        favoriteMovieListCounterState?.apply {
+    override fun newState(state: FavoriteMovieListCounterState) {
+        state.apply {
             favoriteMovieListBadgeDrawable.isVisible = favoriteCount > 0
             favoriteMovieListBadgeDrawable.number = favoriteCount
         }
@@ -43,8 +43,8 @@ class MovieActivity : AppCompatActivity(), StoreSubscriber<FavoriteMovieListCoun
 
     override fun onStart() {
         super.onStart()
-        store.subscribe(this) {
-            it.select { appState ->
+        store.subscribe(this) { appStateSubscription ->
+            appStateSubscription.select { appState ->
                 appState.favoriteMovieListCounterState
             }
         }

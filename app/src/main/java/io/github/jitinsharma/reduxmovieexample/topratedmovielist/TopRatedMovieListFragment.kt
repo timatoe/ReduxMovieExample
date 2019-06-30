@@ -18,12 +18,10 @@ import org.rekotlin.StoreSubscriber
 /**
  * A simple [Fragment] subclass.
  */
-class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListState?> {
+class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListState> {
 
-    override fun newState(stateTopRated: TopRatedMovieListState?) {
-        stateTopRated?.movieObjects?.let {
-            initializeAdapter(it)
-        }
+    override fun newState(state: TopRatedMovieListState) {
+        initializeAdapter(state.movieObjects)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +41,9 @@ class TopRatedMovieListFragment : Fragment(), StoreSubscriber<TopRatedMovieListS
 
     override fun onStart() {
         super.onStart()
-        store.subscribe(this) {
-            it.select {
-                it.topRatedMovieListState
+        store.subscribe(this) { appStateSubscription ->
+            appStateSubscription.select { appState ->
+                appState.topRatedMovieListState
             }.skipRepeats()
         }
     }
